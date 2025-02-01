@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Opens a new zet note/entry using the current isosec as the filename.
+
+set -e
+
+if [[ $# -gt 1 ]]; then
+	>&2 echo "Usage: zetentry"
+	exit 1
+fi
+
+if [[ -z "$EDITOR" ]]; then
+    >&2 echo "EDITOR is not set. Please set this to your terminal editor (such as vi)"
+    exit 1
+fi
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
+	>&2 echo "Err: Zet directory doesn't exist. Please create one and assign to env ZETDIR"
+	exit 1
+fi
+
+cd "$ZETDIR" > /dev/null
+CURR_ZK=$(isosec)
+
+$EDITOR "$CURR_ZK.md"
+if [[ ! -e "$CURR_ZK.md" ]]; then
+	echo "File not created"
+else
+	echo "$CURR_ZK"
+fi

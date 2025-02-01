@@ -30,7 +30,7 @@ This is my implementation of the Zettelkasten note-taking method. I have created
 
 All zet commands error out if `ZETDIR` is unset
 
-1. `zetentry`: Opens a new zet note/entry using the current isosec as the filename. If you don't save the file, it will be automatically removed.
+1. `zetentry`: Opens a new zet note/entry using the current isosec as the filename. 
 
 2. `zetget`: Takes an isosec as an argument and opens it in your `EDITOR`. Errors out if the given argument is not an isosec.
 
@@ -40,9 +40,13 @@ All zet commands error out if `ZETDIR` is unset
 
 5. `zetplace`: Takes an isosec and converts it into a markdown link. Works only in zettelkasten. Errors out if the argument is not an isosec.
 
-6. `zetback`: Takes an isosec and returns entries which link to the given isosec. Can be made interactive using fzf.
+6. `zetback`: Takes an isosec and returns entries which link to the given isosec.
 
-7. `ztg`: Zet Tag Generate will use ctags to index tags for easier navigation - WIP
+7. `zetag`: Zet Tag Generate will use ctags to index tags for easier navigation - WIP
+
+## Helper Commands
+
+1. `zetloc` - Locates a given isosec and returns absolute path of the entry
 
 ## Useful optional dependencies
 
@@ -57,3 +61,19 @@ All zet commands error out if `ZETDIR` is unset
 
 * Tag indexing
 
+
+## vimrc
+
+```vimscript
+" Zettelkasten get heading
+function Headings()
+	set noshelltemp
+	read !zethead -i
+	set shelltemp
+endfunction
+
+" Zet get backlinks to current file
+function Backlinks()
+	read !zetback %:p -v
+endfunction
+```

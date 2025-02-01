@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Grep through entire zettelkasten.
+
+set -e
+
+if [[ (( $# -lt 1 )) || (( $# -gt 1 )) ]]; then
+	echo "Usage: zets <term>"
+	exit 1
+fi
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d $ZETDIR )) && (( -w $ZETDIR )) && (( -x $ZETDIR )) ]]; then
+	echo "Err: Zet directory doesn't exist. Please create one as ~/Zet"
+	exit 1
+fi
+
+GREP="grep"
+if [[ -n $(which rg) ]]; then
+	GREP="rg"
+fi
+
+cd "$ZETDIR" > /dev/null
+"$GREP" -i "$1"
+
+

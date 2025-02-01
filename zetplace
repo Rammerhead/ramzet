@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Takes an isosec and converts it into a markdown link. Works only in zettelkasten. Errors out if the argument is not an isosec.
+
+set -e
+
+if [[ $# -gt 1 && $# -lt 1 ]]; then
+	>&2 echo "Usage: zetplace <term>"
+	exit 1
+fi
+
+ISOSEC=$1
+
+if [[ $# == 0 ]]; then
+	ISOSEC=$(cat)
+fi
+
+if [[ (( $# -gt 1 )) || (( -z "$ISOSEC" )) ]]; then
+	>&2 echo "Usage: zetplace <term>"
+	exit 1
+fi
+
+set +e
+zetloc "$ISOSEC" > /dev/null
+if [[ "$?" == 1 ]]; then
+	>&2 echo "Error locating $ISOSEC"
+	exit 1
+fi
+set -e
+
+echo "[$ISOSEC](./$ISOSEC.md)"

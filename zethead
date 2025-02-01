@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Searches through zet entries on the basis of headings. Can be made interactive using fzf.
+
+set -e
+
+if [[ "$#" -gt 1 ]]; then
+	>&2 echo "Usage: zethead [-i | 'heading']"
+	exit 1
+fi
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
+	>&2 echo "Err: Zet directory doesn't exist. Please create one and assign to env ZETDIR"
+	exit 1
+fi
+
+GREP="grep"
+if [[ -n $(which rg) ]]; then
+	GREP="rg"
+fi
+
+cd "$ZETDIR" > /dev/null
+
+RESULT=$("$GREP"  "^# " . -g "!$ZETDIR/media/")
+
+
+if [[ "$1" == "-i" ]]; then
+	if [[ -z $(which fzf) ]]; then
+		>&2 echo "fzf required for -i"
+		exit
+	fi
+	RESULT=$(echo "$RESULT" | fzf)
+else
+	RESULT=$("$GREP" -i "$1" <<< "$RESULT")
+fi
+
+
+echo "${RESULT}"

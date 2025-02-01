@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Finds the path of the zet entry given an isosec
+
+set -e
+
+ISOSEC=$1
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
+	>&2 echo "Err: Zet directory doesn't exist. Please create one and assign to env ZETDIR"
+	exit 1
+fi
+
+if [[ (( $# -gt 1 )) || (( -z "$ISOSEC" )) ]]; then
+	echo "Usage: zetloc <term>"
+	exit 1
+fi
+
+if [[ $# == 0 ]]; then
+	ISOSEC=$(cat)
+	# remove leading whitespace characters
+	ISOSEC="${ISOSEC#"${ISOSEC%%[![:space:]]*}"}"
+	# remove trailing whitespace characters
+	ISOSEC="${ISOSEC%"${ISOSEC##*[![:space:]]}"}"  
+fi
+
+PARSED="${ISOSEC::4}-${ISOSEC:4:2}-${ISOSEC:6:2} ${ISOSEC:8:2}:${ISOSEC:10:2}:${ISOSEC:12:2}"
+if ! date --date="$PARSED" >/dev/null 2>/dev/null ; then
+	>&2 echo "ISOSEC is not of format YYYYMMDDHHmmSS"
+	exit 1
+fi
+
+if [[ ! -e "$ZETDIR/$ISOSEC.md" ]]; then
+	echo "$ISOSEC not found"
+	exit 1
+fi
+
+echo "$ZETDIR/$ISOSEC.md"

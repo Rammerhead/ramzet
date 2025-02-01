@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Takes an isosec as an argument and opens it in your `EDITOR`. Errors out if the given argument is not an isosec.
+
+ISOSEC="$1"
+
+set -e
+
+if [[ $# -gt 1 || $# -lt 1 ]]; then
+	>&2 echo "Usage: zetget 'isosec'"
+	exit 1
+fi
+
+if [[ -z "$EDITOR" ]]; then
+    >&2 echo "EDITOR is not set. Please set this to your terminal editor (such as vi)"
+    exit 1
+fi
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
+	>&2 echo "Err: Zet directory doesn't exist. Please create one and assign to env ZETDIR"
+	exit 1
+fi
+
+cd "$ZETDIR" > /dev/null
+
+set +e
+LOC=$(zetloc "$ISOSEC")
+
+if [[ $? == 1 ]]; then
+	>&2 echo "Error locating '$ISOSEC'"
+	exit 1
+fi
+set -e
+
+$EDITOR "$LOC"
