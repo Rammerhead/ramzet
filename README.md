@@ -32,7 +32,7 @@ All zet commands error out if `ZETDIR` is unset
 
 1. `zetentry`: Opens a new zet note/entry using the current isosec as the filename. 
 
-2. `zetget`: Takes an isosec as an argument and opens it in your `EDITOR`. Errors out if the given argument is not an isosec.
+2. `zetget`: Takes an isosec as an argument and opens it in your `EDITOR`. Errors out if the given argument is not an isosec. Has an interactive option too "-i" which uses fzf
 
 3. `zethead`: Searches through zet entries on the basis of headings. Can be made interactive using fzf.
 

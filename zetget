@@ -7,7 +7,7 @@ ISOSEC="$1"
 set -e
 
 if [[ $# -gt 1 || $# -lt 1 ]]; then
-	>&2 echo "Usage: zetget 'isosec'"
+	>&2 echo "Usage: zetget [ -i | 'isosec' ]"
 	exit 1
 fi
 
@@ -26,7 +26,21 @@ if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
 	exit 1
 fi
 
+GREP="grep"
+if [[ -n $(which rg) ]]; then
+	GREP="rg"
+fi
+
 cd "$ZETDIR" > /dev/null
+
+if [[ $1 == "-i" ]]; then
+	if [[ -z $(which fzf) ]]; then
+		>&2 echo "fzf required for -i"
+		exit
+	fi
+	LOC=$("$GREP"  "^# " ./*.md | fzf)
+	ISOSEC=${LOC:2:14}
+fi
 
 set +e
 LOC=$(zetloc "$ISOSEC")
