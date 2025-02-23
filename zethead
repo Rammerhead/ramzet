@@ -41,8 +41,8 @@ fi
 
 
 echo "$RESULT" | while IFS="\n" read LINE; do
-	PREFIX="${LINE%%:# *}"
-	SUFFIX="${LINE##*:# }"
-	echo "[$SUFFIX](./$PREFIX)"
+	FILENAME="${LINE%%:# *}"
+	HEADING="${LINE##*:# }"
+	echo "[$HEADING](./$FILENAME)"
 done
 

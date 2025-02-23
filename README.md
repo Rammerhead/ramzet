@@ -44,6 +44,8 @@ All zet commands error out if `ZETDIR` is unset
 
 7. `zetag`: Zet Tag Generate will use ctags to index tags for easier navigation - WIP
 
+8. `zetlink`: Displays all the links that a zet entry has to other entries
+
 ## Helper Commands
 
 1. `zetloc` - Locates a given isosec and returns absolute path of the entry

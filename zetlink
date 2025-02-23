@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+
+if [[ "$#" -gt 1 ]]; then
+	>&2 echo "Usage: zetlink [-i | 'heading']"
+	exit 1
+fi
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
+	>&2 echo "Err: Zet directory doesn't exist. Please create one and assign to env ZETDIR"
+	exit 1
+fi
+
+
+# Check if rg is installed
+GREP="grep"
+if [[ -n $(which rg) ]]; then
+	GREP="rg"
+fi
+
+cd "$ZETDIR" > /dev/null
+
+RESULT=$("$GREP"  "^# " ./*.md)
+
+
+# Check if we're using interactive mode
+# If not, then grep directly
+# Store the result in the required variable
+if [[ "$1" == "-i" ]]; then
+	if [[ -z $(which fzf) ]]; then
+		>&2 echo "fzf required for -i"
+		exit
+	fi
+	RESULT=$(echo "$RESULT" | fzf)
+else
+	RESULT=$("$GREP" -i "$1" <<< "$RESULT")
+fi
+
+
+# For every line, grep to find more markdown links
+# ending with '.md'
+while read -r LINE; do
+	SUFFIX="${LINE%%:# *}"
+	PREFIX="${LINE##*:# }"
+	PREFIX="$(echo -e "$PREFIX | ${SUFFIX:2:-3}")"
+	set +e
+	LINKS="$(rg -N '\(\./[0-9]{14}\.md\)' "$SUFFIX")"
+	set -e
+	if [[ ! -z "$LINKS" ]]; then
+		while read -r LINK; do
+			LINK=$(echo "$LINK" | rg -o '\[.*\]\(.*\)')
+			INNERPREFIX="${LINK%%](./*}"
+			INNERSUFFIX="${LINK##*](./}"
+			PREFIX="$PREFIX
+		|-> ${INNERPREFIX:1} | ${INNERSUFFIX::-4}"
+		done <<< "$LINKS"
+	fi
+	echo "$PREFIX"
+done <<< "$RESULT"
+
+
