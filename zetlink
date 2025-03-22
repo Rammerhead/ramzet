@@ -52,7 +52,7 @@ while read -r LINE; do
 	set +e
 	LINKS="$(rg -N '\(\./[0-9]{14}\.md\)' "$SUFFIX")"
 	set -e
-	if [[ ! -z "$LINKS" ]]; then
+	if [[ -n "$LINKS" ]]; then
 		while read -r LINK; do
 			LINK=$(echo "$LINK" | rg -o '\[.*\]\(.*\)')
 			INNERPREFIX="${LINK%%](./*}"

@@ -26,7 +26,7 @@ fi
 
 cd "$ZETDIR" > /dev/null
 
-RESULT=$("$GREP"  "^# " *.md)
+RESULT=$("$GREP"  "^# " ./*.md)
 
 
 if [[ "$1" == "-i" ]]; then
@@ -40,9 +40,9 @@ else
 fi
 
 
-echo "$RESULT" | while IFS="\n" read LINE; do
+echo "$RESULT" | while IFS=$'\n' read -r LINE; do
 	FILENAME="${LINE%%:# *}"
 	HEADING="${LINE##*:# }"
-	echo "[$HEADING](./$FILENAME)"
+	echo "[$HEADING]($FILENAME)"
 done
 

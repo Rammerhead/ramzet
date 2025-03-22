@@ -46,6 +46,8 @@ All zet commands error out if `ZETDIR` is unset
 
 8. `zetlink`: Displays all the links that a zet entry has to other entries
 
+9. `zetlank`: Displays a list of zet entries which are too long (in terms of number of lines). Defaults to 45 lines. You can optionally provide it with your own "num of line" threshold.
+
 ## Helper Commands
 
 1. `zetloc` - Locates a given isosec and returns absolute path of the entry

@@ -25,6 +25,9 @@ if [[ -n $(which rg) ]]; then
 fi
 
 cd "$ZETDIR" > /dev/null
-"$GREP" -i "$1"
+RESULT=$("$GREP" -ic "$1")
 
+for LINE in $RESULT; do
+	zethead "${LINE::14}"
+done
 

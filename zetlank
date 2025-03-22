@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+if [[ $# -gt 1 ]]; then
+	>&2 echo "Usage: zetlank [ -l <lines> ]"
+	exit 1
+fi
+
+if [[ -z "$ZETDIR" ]]; then
+	>&2 echo "ZETDIR not set or is empty. Please set it to a valid location"
+	exit 1
+fi
+
+if [[ (( ! -d "$ZETDIR" )) && (( -w "$ZETDIR" )) && (( -x "$ZETDIR" )) ]]; then
+	>&2 echo "Err: Zet directory doesn't exist. Please create one and assign to env ZETDIR"
+	exit 1
+fi
+
+cd "$ZETDIR" > /dev/null
+
+for file in $(find . -maxdepth 1 -type f); do 
+	if [[ $(wc -l < "$file") -gt 30 ]]; then    
+		echo "${file:2} $(head -n 1 "$file")";     
+	fi; 
+done
